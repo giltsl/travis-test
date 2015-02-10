@@ -2,12 +2,12 @@ module DPL
         class Provider
                 class TestFairy < Provider
 
-                        # require "net/http"
-                        # require "uri"
-                        # require 'net/http/post/multipart'
-                        # require 'json'
-                        # require 'open-uri'
-                        # require 'tempfile'
+                        require "net/http"
+                        require "uri"
+                        require 'net/http/post/multipart'
+                        require 'json'
+                        require 'open-uri'
+                        require 'tempfile'
 
 
                         @@tag = "-Testfairy-"
