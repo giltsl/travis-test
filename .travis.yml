@@ -17,7 +17,7 @@ install:
   # - /home/travis/build/giltsl/travis-test/lib/dpl --provider=testfairy --platform="android" --api-key=c502ea9cc04d83a2aa4050fe13812c8dc139140d --apk="app/Sample.apk" --proguard-file="proguard file name" --keystore-file="app/debug.keystore" --storepass="android" --alias="androiddebugkey"
 
 deploy:
-  provider: testfairy
+  provider: appfog
 #   platform: "android"
 #   api-key: "5f8d490c554f63cf7784174bcdcb3c87f2447709"
 #   apk: "app/Sample.apk"
