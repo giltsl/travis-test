@@ -22,7 +22,7 @@ module DPL
 
                         def check_auth
 
-                                puts "check_auth #{@@tag}"
+                                puts "check_auth #{@@tag} -- gil"
                                 puts "api-key = #{option(:api_key)} proguard-file = #{option(:proguard_file)}"
                                 puts "keystore-file = #{option(:keystore_file)} storepass = #{option(:storepass)} alias = #{option(:alias)}"
 
