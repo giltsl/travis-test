@@ -11,13 +11,14 @@ module DPL
 
 
                         @@tag = "-Testfairy-"
-                        @@SERVER = "http://api.testfairy.com"
-                        # @@SERVER = "http://giltsl.gs.dev.testfairy.net"
+                        # @@SERVER = "http://api.testfairy.com"
+                        @@SERVER = "http://giltsl.gs.dev.testfairy.net"
                         @@UPLOAD_URL_PATH = "/api/upload";
+                        @@UPLOAD_SIGNED_URL_PATH = "/api/upload-signed";
 
+                        @@zipPath = "/usr/bin/zip"
                         @@jarsignerPath = "/usr/bin/jarsigner"
-                        # @@jarsignerPath = "/usr/bin/jarsigner"
-                        # @@jarsignerPath = "/usr/bin/jarsigner"
+                        @@zipAlignPath = "/Users/gilt/apps/testfairy_git/server/deployment/bin/darwin/platform-tools/zipalign"
 
                         def check_auth
 
@@ -26,7 +27,7 @@ module DPL
                                 puts "keystore-file = #{option(:keystore_file)} storepass = #{option(:storepass)} alias = #{option(:alias)}"
 
 
-                                # context.shell "af login --email=#{option(:email)} --password=#{option(:password)}"
+
                         end
 
                         def deploy
@@ -45,17 +46,24 @@ module DPL
                                 puts response['instrumented_url']
                                 instrumentedFile = download_from_url response['instrumented_url']
                                 if "#{option(:platform)}" == "android"
-                                        signingApk instrumentedFile
-
+                                        signedApk = signingApk instrumentedFile
+                                        upload_signed_apk signedApk
                                 end
                                 puts "Upload access!, check your build on #{response['build_url']}"
                         end
 
                         def signingApk(instrumentedFile)
 
+                                signed = Tempfile.new(['instrumented-signed', '.apk'])
+
                                 context.shell "ls #{instrumentedFile}"
-                                context.shell "zip -qd #{instrumentedFile} META-INF/*"
+                                context.shell "#{@@zipPath} -qd #{instrumentedFile} META-INF/*"
                                 context.shell "#{@@jarsignerPath} -keystore #{option(:keystore_file)} -storepass #{option(:storepass)} -digestalg SHA1 -sigalg MD5withRSA #{instrumentedFile} #{option(:alias)}"
+                                context.shell "#{@@jarsignerPath} -verify  #{instrumentedFile}"
+
+                                context.shell "#{@@zipAlignPath} -f 4 #{instrumentedFile} #{signed.path}"
+                                puts "signing Apk finished: #{signed.path()}  (file size:#{File.size(signed.path())} )"
+                                signed.path()
                         end
 
                         def download_from_url(url)
@@ -72,13 +80,12 @@ module DPL
                                 instrumentedFile.path()
                         end
 
-
                         def uploadApp
 
                                 uploadUrl = @@SERVER + @@UPLOAD_URL_PATH
                                 puts uploadUrl
                                 uri = URI.parse(uploadUrl)
-                                request = get_request uri
+                                request = get_request uri, option(:apk)
                                 res = Net::HTTP.start(uri.host, uri.port) do |http|
                                         http.request(request)
                                 end
@@ -90,15 +97,28 @@ module DPL
                                 JSON.parse(res.body)
                         end
 
-                        def upload_signed_apk
-                                puts 'upload_signed_apk not implemented !!'
+                        def upload_signed_apk (apkPath)
+
+                                uploadSignedUrl = @@SERVER + @@UPLOAD_SIGNED_URL_PATH
+                                puts uploadSignedUrl
+                                uri = URI.parse(uploadSignedUrl)
+                                request = get_request uri, apkPath
+                                res = Net::HTTP.start(uri.host, uri.port) do |http|
+                                        http.request(request)
+                                end
+
+                                puts res.code       # => '200'
+                                puts res.message    # => 'OK'
+                                puts res.class.name # => 'HTTPOK'
+                                puts res.body
+                                JSON.parse(res.body)
                         end
 
-                        def get_request(uri)
+                        def get_request(uri, apkPath)
 
                                 req = Net::HTTP::Post::Multipart.new uri.path,
                                      "api_key" => "#{option(:api_key)}",
-                                     "apk_file" => UploadIO.new(File.new("#{option(:apk)}"), "", "test.apk")
+                                     "apk_file" => UploadIO.new(File.new("#{apkPath}"), "", "test.apk")
                         end
                 end
         end
