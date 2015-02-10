@@ -36,6 +36,7 @@ module DPL
     autoload :PuppetForge,  'dpl/provider/puppet_forge'
     autoload :Packagecloud, 'dpl/provider/packagecloud'
     autoload :ChefSupermarket,  'dpl/provider/chef_supermarket'
+    autoload :TestFairy,  'dpl/provider/testfairy'
 
 
     def self.new(context, options)
@@ -147,7 +148,7 @@ module DPL
     end
 
     def sha
-      @sha ||= context.env['TRAVIS_COMMIT'] || `git rev-parse HEAD`.strip
+      # @sha ||= context.env['TRAVIS_COMMIT'] || `git rev-parse HEAD`.strip
     end
 
     def commit_msg
@@ -157,13 +158,13 @@ module DPL
     def cleanup
       return if options[:skip_cleanup]
       context.shell "mv .dpl ~/dpl"
-      context.shell "git stash --all"
+      # context.shell "git stash --all"
       context.shell "mv ~/dpl .dpl"
     end
 
     def uncleanup
       return if options[:skip_cleanup]
-      context.shell "git stash pop"
+      # context.shell "git stash pop"
     end
 
     def needs_key?
@@ -178,8 +179,8 @@ module DPL
     end
 
     def setup_git_credentials
-      context.shell "git config user.email >/dev/null 2>/dev/null || git config user.email `whoami`@localhost"
-      context.shell "git config user.name >/dev/null 2>/dev/null || git config user.name `whoami`@localhost"
+      # context.shell "git config user.email >/dev/null 2>/dev/null || git config user.email `whoami`@localhost"
+      # context.shell "git config user.name >/dev/null 2>/dev/null || git config user.name `whoami`@localhost"
     end
 
     def setup_git_ssh(path, key_path)

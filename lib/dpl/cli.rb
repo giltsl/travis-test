@@ -51,6 +51,7 @@ module DPL
     end
 
     def shell(command)
+      puts command
       system(command)
     end
 
