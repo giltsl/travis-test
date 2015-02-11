@@ -4,7 +4,7 @@ module DPL
 
                         require "net/http"
                         require "uri"
-                        # require 'net/http/post/multipart'
+                        require 'net/http/post/multipart'
                         require 'json'
                         require 'open-uri'
                         require 'tempfile'
