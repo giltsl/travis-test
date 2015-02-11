@@ -30,9 +30,9 @@ group :sss do
   gem 'mime-types'
 end
 
-# group :code_deploy do
-#   gem 'aws-sdk', '2.0.13.pre'
-# end
+group :code_deploy do
+  gem 'aws-sdk', '2.0.13.pre'
+end
 
 group :cloud_files do
   gem 'fog'
@@ -78,10 +78,10 @@ group :chef_supermarket do
 end
 
 group :testfairy do
-  gem 'net/http'
-  gem 'uri'
-  gem "net/http/post/multipart"
+  # gem 'net/http'
+  # gem 'uri'
+  # gem "net/http/post/multipart"
   gem 'json'
-  gem 'open-uri'
-  gem 'tempfile'
+  # gem 'open-uri'
+  # gem 'tempfile'
 end
