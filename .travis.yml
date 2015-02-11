@@ -6,7 +6,7 @@ sudo: false
 
 install: 
   - gem build dpl.gemspec
-  - rvm 2.2 do ruby -S gem install dpl-*.gem
+  - rvm 2.1 do ruby -S gem install dpl-*.gem
   
 script:
   -  bundle install
