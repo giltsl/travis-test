@@ -1,4 +1,4 @@
-source 'https://rubygems.org'
+source 'http://rubygems.org'
 gemspec
 
 platforms :mri_19 do
@@ -80,8 +80,8 @@ end
 group :testfairy do
   gem 'net/http'
   gem 'uri'
-  # gem "net/http/post/multipart"
+  gem "net/http/post/multipart"
   gem 'json'
-  # gem 'open-uri'
-  # gem 'tempfile'
+  gem 'open-uri'
+  gem 'tempfile'
 end
