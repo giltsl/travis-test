@@ -30,9 +30,9 @@ group :sss do
   gem 'mime-types'
 end
 
-group :code_deploy do
-  gem 'aws-sdk', '2.0.13.pre'
-end
+# group :code_deploy do
+#   gem 'aws-sdk', '2.0.13.pre'
+# end
 
 group :cloud_files do
   gem 'fog'
