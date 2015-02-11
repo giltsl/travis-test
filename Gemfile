@@ -80,7 +80,7 @@ end
 group :testfairy do
   # gem 'net/http'
   # gem 'uri'
-  gem 'multipart-post', '~> 2.0.0' 
+  gem 'multipart-post', '~> 2.0.0'
   gem 'json'
   # gem 'open-uri'
   # gem 'tempfile'
