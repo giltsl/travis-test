@@ -5,9 +5,9 @@ rvm:
 sudo: false
 
 install: 
-  - bundle install
-  - gem build dpl.gemspec
-  - rvm 2.1 do ruby -S gem install dpl-*.gem
+  # - bundle install
+  # - gem build dpl.gemspec
+  # - rvm 2.1 do ruby -S gem install dpl-*.gem
   
 script:
   # -  bundle install
@@ -16,6 +16,12 @@ script:
   # - /home/travis/.rvm/gems/ruby-2.2.0/gems/dpl-1.7.10.travis.11.1/bin/dpl --provider=testfairy --platform="android" --api-key=c502ea9cc04d83a2aa4050fe13812c8dc139140d --apk="app/Sample.apk" --proguard-file="proguard file name" --keystore-file="app/debug.keystore" --storepass="android" --alias="androiddebugkey"
   # - /home/travis/.rvm/gems/ruby-2.2.0/wrappers/dpl --provider=testfairy --platform="android" --api-key=c502ea9cc04d83a2aa4050fe13812c8dc139140d --apk="app/Sample.apk" --proguard-file="proguard file name" --keystore-file="app/debug.keystore" --storepass="android" --alias="androiddebugkey"
   # - /home/travis/build/giltsl/travis-test/lib/dpl --provider=testfairy --platform="android" --api-key=c502ea9cc04d83a2aa4050fe13812c8dc139140d --apk="app/Sample.apk" --proguard-file="proguard file name" --keystore-file="app/debug.keystore" --storepass="android" --alias="androiddebugkey"
+
+before_deploy:
+  # - git clone -b provider-deis-0.7 https://github.com/johanneswuerbach/dpl.git
+  - cd dpl && gem build dpl.gemspec
+  - rvm 2.1 do ruby -S gem install dpl-*.gem
+  - cd ..
 
 deploy:
   provider: testfairy
