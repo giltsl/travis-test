@@ -82,6 +82,6 @@ group :testfairy do
   gem 'uri'
   # gem "net/http/post/multipart"
   gem 'json'
-  gem 'open-uri'
+  # gem 'open-uri'
   # gem 'tempfile'
 end
