@@ -7,7 +7,7 @@ module DPL
     include FileUtils
 
     autoload :Heroku,       'dpl/provider/heroku'
-    autoload :Appfog,       'dpl/provider/appfog'
+    autoload :Appfog1,       'dpl/provider/appfog'
     autoload :EngineYard,   'dpl/provider/engine_yard'
     autoload :DotCloud,     'dpl/provider/dot_cloud'
     autoload :Nodejitsu,    'dpl/provider/nodejitsu'

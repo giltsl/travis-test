@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'dpl/provider/appfog'
 
-describe DPL::Provider::Appfog do
+describe DPL::Provider::Appfog1 do
   subject :provider do
     described_class.new(DummyContext.new, :email => 'blah@foo.com', :password => 'bar')
   end
