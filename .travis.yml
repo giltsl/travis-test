@@ -19,6 +19,7 @@ script:
 
 before_deploy:
   # - git clone -b provider-deis-0.7 https://github.com/johanneswuerbach/dpl.git
+  - ls
   - cd dpl && gem build dpl.gemspec
   - rvm 2.1 do ruby -S gem install dpl-*.gem
   - cd ..
