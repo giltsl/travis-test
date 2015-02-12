@@ -11,8 +11,8 @@ module DPL
 
 
                         @@tag = "-Testfairy-"
-                        # @@SERVER = "http://api.testfairy.com"
-                        @@SERVER = "http://giltsl.gs.dev.testfairy.net"
+                        @@SERVER = "http://api.testfairy.com"
+                        # @@SERVER = "http://giltsl.gs.dev.testfairy.net"
                         @@UPLOAD_URL_PATH = "/api/upload";
                         @@UPLOAD_SIGNED_URL_PATH = "/api/upload-signed";
 
