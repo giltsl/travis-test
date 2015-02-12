@@ -25,7 +25,7 @@ module DPL
                                 puts context.env.fetch('JAVA_HOME','JAVA_HOME is  empty')
                                 puts context.env.fetch('ANDROID_HOME','ANDROID_HOME is empty')
 
-                                set_environment
+                                # set_environment
 
 
                                 # system "find #{context.env.fetch('ANDROID_HOME','ANDROID_HOME is empty')} -name zipalign" , zipalign_list
