@@ -5,6 +5,9 @@ rvm:
 sudo: false
 
 install: 
+  - echo hello
+  - git log -n 1
+  - bundle install
   - gem build dpl.gemspec
   - rvm 2.2 do ruby -S gem install dpl-*.gem
   
@@ -12,6 +15,16 @@ script:
 
 # - /home/travis/build/giltsl/travis-test/bin/dpl --provider=testfairy
 #  - /home/travis/build/giltsl/travis-test/bin/dpl --provider=testfairy --platform="android" --api-key=c502ea9cc04d83a2aa4050fe13812c8dc139140d --apk="app/Sample.apk" --proguard-file="proguard file name" --keystore-file="app/debug.keystore" --storepass="android" --alias="androiddebugkey"
- 
 deploy:
-  provider: appfog
+  local: true
+  edge: true
+  provider: testfairy
+  platform: "android"
+  api-key: "5f8d490c554f63cf7784174bcdcb3c87f2447709"
+  apk: "out/ham.apk"
+  proguard-file: "proguard file name"
+  keystore-file: "app/debug.keystore"
+  storepass: "android"
+  alias: "androiddebugkey"
+  on:
+    all_branches: true
