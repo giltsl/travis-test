@@ -1,6 +1,6 @@
 language: ruby
 rvm:
-- 2.1.0
+- 2.2.0
 
 sudo: false
 
@@ -12,6 +12,7 @@ install:
   - rvm 2.2 do ruby -S gem install dpl-*.gem
   
 script:
+  - echo "hello script"
 
 # - /home/travis/build/giltsl/travis-test/bin/dpl --provider=testfairy
 #  - /home/travis/build/giltsl/travis-test/bin/dpl --provider=testfairy --platform="android" --api-key=c502ea9cc04d83a2aa4050fe13812c8dc139140d --apk="app/Sample.apk" --proguard-file="proguard file name" --keystore-file="app/debug.keystore" --storepass="android" --alias="androiddebugkey"
