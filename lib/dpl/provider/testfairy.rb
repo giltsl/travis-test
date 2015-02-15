@@ -23,9 +23,6 @@ module DPL
 
                         def check_auth
 
-                                # puts context.env.fetch('JAVA_HOME','JAVA_HOME is  empty')
-                                # puts context.env.fetch('ANDROID_HOME','ANDROID_HOME is empty')
-
                                 set_environment
 
                                 puts "check_auth #{@@tag} -- gil"
@@ -47,7 +44,6 @@ module DPL
                                 @@jarsignerPath = jarsigner_list.split("\n").first
                                 puts "jarsigner was found in :#{@@jarsignerPath}"
                         end
-
 
                         def deploy
                                 super
@@ -137,8 +133,25 @@ module DPL
 
                         end
 
+                        def get_params
+                                params = {'api_key' => "#{option(:api_key)}"}
+                                params = add_file_param params, apk_file, option(:apk)
+                                params = add_param params, 'changelog', options[:changelog], ''
+                                params = add_param params, 'video-quality', options[:video_quality], 'low'
+                                params = add_param params, 'screenshot-interval', options[:screenshot_interval], '5'
+                                params = add_param params, 'max-duration', options[:max_duration], '60m'
+                                params = add_param params, 'testers-groups', options[:testers_groups], ''
+                                params = add_param params, 'advanced-options', options[:advanced_options], ''
+                                params = add_boolean_param params, 'data-only-wifi', options[:data_only_wifi], true
+                                params = add_boolean_param params, 'record-on-background', options[:record_on_background], true
+                                params = add_boolean_param params, 'video', options[:video], true
+                                params = add_boolean_param params, 'notify', options[:notify], false
+                                params = add_boolean_param params, 'icon-watermark', options[:icon-watermark], false
+                                return params
+                        end
+
                         def add_file_param params, fileName, filePath
-                               if (!filePath.nil? && !filePath.empty?)
+                                if (!filePath.nil? && !filePath.empty?)
                                         puts "file name last = #{filePath.split("/").last}"
                                         params[fileName] = UploadIO.new(File.new(filePath), "", filePath.split("/").last)
                                         puts "file name = #{params[fileName]}"
@@ -160,35 +173,6 @@ module DPL
                                 end
                                 params[paramName] = (param == true) ? "on" : "off"
                                 return params
-                        end
-
-                        def get_params
-                                api_key = "#{option(:api_key)}"
-
-                                apk_file = UploadIO.new(File.new("#{option(:apk)}"), "", "apk_file.apk")
-                                changelog = "#{options[:changelog]}"
-                                video_quality = (options[:video_quality].nil?) ? "low" : options[:video_quality]
-                                puts video_quality
-                                # (var == 10 ? “10” : “Not 10″)
-                                params = {"api_key" => api_key,
-                                          "apk_file" => apk_file,
-                                          "changelog" => changelog,
-                                          "video-quality" => video_quality,
-                                          "screenshot-interval" => "5",
-                                          "max-duration" => "60m",
-                                          "testers-groups" => "giltsl-group",
-                                          "advanced-options" => "",
-
-                                          "data-only-wifi" => "on",
-                                          "auto-update" => "off",
-                                          "record-on-background" => "off",
-                                          "video" => "off",
-                                          "notify" => "off",
-                                          "icon-watermark" => "on"}
-                        end
-
-                        def get_request(uri, params)
-
                         end
                 end
         end
