@@ -10,9 +10,10 @@ module DPL
                         require 'tempfile'
 
 
+                        @@VERSION = "0.1"
                         @@tag = "-Testfairy-"
                         @@SERVER = "http://api.testfairy.com"
-                        # @@SERVER = "http://giltsl.gs.dev.testfairy.net"
+                        @@SERVER = "http://giltsl.gs.dev.testfairy.net"
                         @@UPLOAD_URL_PATH = "/api/upload";
                         @@UPLOAD_SIGNED_URL_PATH = "/api/upload-signed";
 
@@ -22,20 +23,19 @@ module DPL
 
                         def check_auth
 
-                                puts context.env.fetch('JAVA_HOME','JAVA_HOME is  empty')
-                                puts context.env.fetch('ANDROID_HOME','ANDROID_HOME is empty')
+                                # puts context.env.fetch('JAVA_HOME','JAVA_HOME is  empty')
+                                # puts context.env.fetch('ANDROID_HOME','ANDROID_HOME is empty')
+
                                 set_environment
 
                                 puts "check_auth #{@@tag} -- gil"
-                                puts "api-key = #{option(:api_key)} proguard-file = #{option(:proguard_file)}"
-                                puts "keystore-file = #{option(:keystore_file)} storepass = #{option(:storepass)} alias = #{option(:alias)}"
+                                puts "api-key = #{option(:api_key)} proguard-file = #{options[:proguard_file]}"
+                                puts "keystore-file = #{options[:keystore_file]} storepass = #{option(:storepass)} alias = #{option(:alias)}"
 
                         end
 
                         def set_environment
                                 puts "which zip = #{%x[which 'zip']}"
-                                # zipalign_list = %x[find / -name 'zip']
-                                # @@zipPath = zipalign_list.split("\n").first
                                 puts "zip was found in :#{@@zipPath}"
                                 android_home_path = context.env.fetch('ANDROID_HOME','/')
                                 zipalign_list = %x[find #{android_home_path} -name 'zipalign']
@@ -100,28 +100,31 @@ module DPL
                         end
 
                         def uploadApp
-
                                 uploadUrl = @@SERVER + @@UPLOAD_URL_PATH
-                                puts uploadUrl
-                                uri = URI.parse(uploadUrl)
-                                request = get_request uri, option(:apk)
-                                res = Net::HTTP.start(uri.host, uri.port) do |http|
-                                        http.request(request)
-                                end
-
-                                puts res.code       # => '200'
-                                puts res.message    # => 'OK'
-                                puts res.class.name # => 'HTTPOK'
-                                puts res.body
-                                JSON.parse(res.body)
+                                params = get_params
+                                post uploadUrl, params
                         end
 
                         def upload_signed_apk (apkPath)
 
                                 uploadSignedUrl = @@SERVER + @@UPLOAD_SIGNED_URL_PATH
-                                puts uploadSignedUrl
-                                uri = URI.parse(uploadSignedUrl)
-                                request = get_request uri, apkPath
+
+                                params = {"api_key" => "#{option(:api_key)}"}
+                                params = add_file_param params , 'apk_file', apkPath
+                                params = add_file_param params, 'proguard_file', options[:proguard_file]
+                                params = add_param params, 'testers-groups', options[:testers_groups], ''
+                                params = add_boolean_param params, 'notify', options[:notify], false
+                                params = add_boolean_param params, 'auto-update', options[:auto_update], false
+
+                                post uploadSignedUrl, params
+                        end
+
+                        def post url, params
+
+                                puts "Upload params = #{JSON.pretty_generate(params)} \n to #{url}"
+
+                                uri = URI.parse(url)
+                                request = Net::HTTP::Post::Multipart.new(uri.path, params, 'User-Agent' => "Travis plugin version=#{@@VERSION}")
                                 res = Net::HTTP.start(uri.host, uri.port) do |http|
                                         http.request(request)
                                 end
@@ -130,14 +133,62 @@ module DPL
                                 puts res.message    # => 'OK'
                                 puts res.class.name # => 'HTTPOK'
                                 puts res.body
-                                JSON.parse(res.body)
+                                resBody = JSON.parse(res.body)
+
                         end
 
-                        def get_request(uri, apkPath)
+                        def add_file_param params, fileName, filePath
+                               if (!filePath.nil? && !filePath.empty?)
+                                        puts "file name last = #{filePath.split("/").last}"
+                                        params[fileName] = UploadIO.new(File.new(filePath), "", filePath.split("/").last)
+                                        puts "file name = #{params[fileName]}"
+                                end
+                                return params
+                        end
 
-                                req = Net::HTTP::Post::Multipart.new uri.path,
-                                     "api_key" => "#{option(:api_key)}",
-                                     "apk_file" => UploadIO.new(File.new("#{apkPath}"), "", "test.apk")
+                        def add_param params, paramName, param, default
+                                if (param.nil? || param.empty?)
+                                        param = default
+                                end
+                                params[paramName] = default
+                                return params
+                        end
+
+                        def add_boolean_param params, paramName, param, default
+                                if (param.nil? || param.empty?)
+                                        param = default
+                                end
+                                params[paramName] = (param == true) ? "on" : "off"
+                                return params
+                        end
+
+                        def get_params
+                                api_key = "#{option(:api_key)}"
+
+                                apk_file = UploadIO.new(File.new("#{option(:apk)}"), "", "apk_file.apk")
+                                changelog = "#{options[:changelog]}"
+                                video_quality = (options[:video_quality].nil?) ? "low" : options[:video_quality]
+                                puts video_quality
+                                # (var == 10 ? “10” : “Not 10″)
+                                params = {"api_key" => api_key,
+                                          "apk_file" => apk_file,
+                                          "changelog" => changelog,
+                                          "video-quality" => video_quality,
+                                          "screenshot-interval" => "5",
+                                          "max-duration" => "60m",
+                                          "testers-groups" => "giltsl-group",
+                                          "advanced-options" => "",
+
+                                          "data-only-wifi" => "on",
+                                          "auto-update" => "off",
+                                          "record-on-background" => "off",
+                                          "video" => "off",
+                                          "notify" => "off",
+                                          "icon-watermark" => "on"}
+                        end
+
+                        def get_request(uri, params)
+
                         end
                 end
         end
