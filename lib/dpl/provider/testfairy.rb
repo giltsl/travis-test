@@ -17,18 +17,37 @@ module DPL
                         @@UPLOAD_SIGNED_URL_PATH = "/api/upload-signed";
 
                         @@zipPath = "/usr/bin/zip"
-                        @@jarsignerPath = "/usr/bin/jarsigner"
-                        @@zipAlignPath = "/Users/gilt/apps/testfairy_git/server/deployment/bin/darwin/platform-tools/zipalign"
+                        @@jarsignerPath = nil #"/usr/bin/jarsigner"
+                        @@zipAlignPath = nil #"/Users/gilt/apps/testfairy_git/server/deployment/bin/darwin/platform-tools/zipalign"
 
                         def check_auth
+
+                                puts context.env.fetch('JAVA_HOME','JAVA_HOME is  empty')
+                                puts context.env.fetch('ANDROID_HOME','ANDROID_HOME is empty')
+                                set_environment
 
                                 puts "check_auth #{@@tag} -- gil"
                                 puts "api-key = #{option(:api_key)} proguard-file = #{option(:proguard_file)}"
                                 puts "keystore-file = #{option(:keystore_file)} storepass = #{option(:storepass)} alias = #{option(:alias)}"
 
-
-
                         end
+
+                        def set_environment
+                                puts "which zip = #{%x[which 'zip']}"
+                                # zipalign_list = %x[find / -name 'zip']
+                                # @@zipPath = zipalign_list.split("\n").first
+                                puts "zip was found in :#{@@zipPath}"
+                                android_home_path = context.env.fetch('ANDROID_HOME','/')
+                                zipalign_list = %x[find #{android_home_path} -name 'zipalign']
+                                @@zipAlignPath = zipalign_list.split("\n").first
+                                puts "zipalign was found in :#{@@zipAlignPath}"
+
+                                java_home_path = context.env.fetch('JAVA_HOME','/')
+                                jarsigner_list = %x[find #{java_home_path} -name 'jarsigner']
+                                @@jarsignerPath = jarsigner_list.split("\n").first
+                                puts "jarsigner was found in :#{@@jarsignerPath}"
+                        end
+
 
                         def deploy
                                 super
