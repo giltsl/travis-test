@@ -116,28 +116,25 @@ module DPL
                         end
 
                         def post url, params
-
                                 puts "Upload params = #{JSON.pretty_generate(params)} \n to #{url}"
-
                                 uri = URI.parse(url)
                                 request = Net::HTTP::Post::Multipart.new(uri.path, params, 'User-Agent' => "Travis plugin version=#{@@VERSION}")
                                 res = Net::HTTP.start(uri.host, uri.port) do |http|
                                         http.request(request)
                                 end
-
-                                puts res.code       # => '200'
-                                puts res.message    # => 'OK'
-                                puts res.class.name # => 'HTTPOK'
                                 puts res.body
                                 resBody = JSON.parse(res.body)
-
+                                if (resBody['status'] == 'fail')
+                                        raise Error, resBody['message']
+                                end
+                                return resBody
                         end
 
                         def get_params
                                 params = {'api_key' => "#{option(:api_key)}"}
-                                params = add_file_param params, apk_file, option(:apk)
+                                params = add_file_param params, 'apk_file', option(:apk)
                                 params = add_param params, 'changelog', options[:changelog], ''
-                                params = add_param params, 'video-quality', options[:video_quality], 'low'
+                                params = add_param params, 'video-quality', options[:video_qualit], 'low'
                                 params = add_param params, 'screenshot-interval', options[:screenshot_interval], '5'
                                 params = add_param params, 'max-duration', options[:max_duration], '60m'
                                 params = add_param params, 'testers-groups', options[:testers_groups], ''
@@ -146,7 +143,7 @@ module DPL
                                 params = add_boolean_param params, 'record-on-background', options[:record_on_background], true
                                 params = add_boolean_param params, 'video', options[:video], true
                                 params = add_boolean_param params, 'notify', options[:notify], false
-                                params = add_boolean_param params, 'icon-watermark', options[:icon-watermark], false
+                                params = add_boolean_param params, 'icon-watermark', options[:icon_watermark], false
                                 return params
                         end
 
@@ -163,7 +160,7 @@ module DPL
                                 if (param.nil? || param.empty?)
                                         param = default
                                 end
-                                params[paramName] = default
+                                params[paramName] = param
                                 return params
                         end
 
